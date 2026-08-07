@@ -1,20 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>StudentHub Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentHub</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-<h1>🎓 StudentHub</h1>
-<p>Your personal productivity companion.</p>
-<h2>Today's Goals</h2>
-<ul>
-    <li>Study Python</li>
-    <li>Practice DSA</li>
-    <li>Complete Flask Day 3</li>
-</ul>
-<button>Open Dashboard</button>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/planner">Planner</a>
+        <a href="/notes">Notes</a>
+        <a href="/expenses">Expenses</a>
+        <a href="/about">About</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <h1>🎓 StudentHub</h1>
+
+        <p>Your Personal Productivity Companion</p>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>📊 Dashboard</h3>
+                <p>View your progress and statistics.</p>
+                <a href="/dashboard">
+                    <button>Open Dashboard</button>
+                </a>
+            </div>
+
+            <div class="card">
+                <h3>📚 Study Planner</h3>
+                <p>Organize your study schedule.</p>
+                <a href="/planner">
+                    <button>Open Planner</button>
+                </a>
+            </div>
+
+            <div class="card">
+                <h3>📝 Notes</h3>
+                <p>Save important notes.</p>
+                <a href="/notes">
+                    <button>Open Notes</button>
+                </a>
+            </div>
+
+            <div class="card">
+                <h3>💰 Expense Tracker</h3>
+                <p>Track your daily expenses.</p>
+                <a href="/expenses">
+                    <button>Open Expenses</button>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
+
 </html>
