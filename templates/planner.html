@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-
-    <title>StudentHub - Expenses</title>
+    <title>StudentHub - Planner</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
@@ -23,50 +22,50 @@
 
 <div class="container">
 
-    <h1>💰 Expense Tracker</h1>
+    <h1>📚 Study Planner</h1>
 
-    <form method="POST" action="/expenses">
+    <form method="POST" action="/planner">
 
         <input
             type="text"
             name="title"
-            placeholder="Expense name"
-            required
-        >
-
-        <input
-            type="number"
-            name="amount"
-            step="0.01"
-            placeholder="Amount"
+            placeholder="Enter a task..."
             required
         >
 
         <button type="submit">
-            Add Expense
+            Add Task
         </button>
 
     </form>
 
     <hr>
 
-    <h2>Total: ₹{{ "%.2f"|format(total) }}</h2>
+    <h2>My Tasks</h2>
 
-    <h2>Expenses</h2>
-
-    {% for expense in expenses %}
+    {% for task in tasks %}
 
         <div class="card">
 
-            <h3>{{ expense[1] }}</h3>
+    {% if task[2] == 1 %}
+        <h3><s>{{ task[1] }}</s></h3>
+        <p>Completed ✅</p>
+    {% else %}
+        <h3>{{ task[1] }}</h3>
 
-            <p>₹{{ "%.2f"|format(expense[2]) }}</p>
+        <a href="/complete_task/{{ task[0] }}">
+            <button type="button">Complete</button>
+        </a>
+    {% endif %}
 
-        </div>
+    <a href="/delete_task/{{ task[0] }}">
+        <button type="button">Delete</button>
+    </a>
 
+</div>
     {% else %}
 
-        <p>No expenses yet.</p>
+        <p>No tasks yet.</p>
 
     {% endfor %}
 

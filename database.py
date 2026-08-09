@@ -1,7 +1,6 @@
 import sqlite3
 
 connection = sqlite3.connect("studenthub.db")
-
 cursor = connection.cursor()
 
 cursor.execute("""
@@ -19,9 +18,14 @@ CREATE TABLE IF NOT EXISTS tasks (
     completed INTEGER DEFAULT 0
 )
 """)
-
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS expenses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    amount REAL NOT NULL
+)
+""")
 connection.commit()
-
-print("Database and tables created successfully!")
-
 connection.close()
+
+print("Database setup complete!")
