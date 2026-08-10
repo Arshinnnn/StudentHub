@@ -1,15 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>StudentHub Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
 <nav>
-
-<a href="/">Home</a>
-
-<a href="/dashboard">Dashboard</a>
-
-<a href="/planner">Planner</a>
-
-<a href="/notes">Notes</a>
-
-<a href="/expenses">Expenses</a>
-
-<a href="/about">About</a>
-
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/planner">Planner</a>
+    <a href="/notes">Notes</a>
+    <a href="/expenses">Expenses</a>
+    <a href="/about">About</a>
 </nav>
+
+<div class="container">
+
+    <h1>🎓 StudentHub</h1>
+
+    <p>Your productivity overview</p>
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>📝 Notes</h2>
+            <h3>{{ total_notes }}</h3>
+            <p>Total Notes</p>
+
+            <a href="/notes">Open Notes →</a>
+        </div>
+
+        <div class="card">
+            <h2>📚 Tasks</h2>
+            <h3>{{ total_tasks }}</h3>
+            <p>Total Tasks</p>
+
+            <a href="/planner">Open Planner →</a>
+        </div>
+
+        <div class="card">
+            <h2>✅ Completed</h2>
+            <h3>{{ completed_tasks }}</h3>
+            <p>Completed Tasks</p>
+        </div>
+
+        <div class="card">
+            <h2>⏳ Pending</h2>
+            <h3>{{ pending_tasks }}</h3>
+            <p>Pending Tasks</p>
+        </div>
+
+        <div class="card">
+            <h2>💰 Expenses</h2>
+            <h3>₹{{ "%.2f"|format(total_expenses) }}</h3>
+            <p>Total Spending</p>
+
+            <a href="/expenses">View Expenses →</a>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>🚀 Quick Actions</h2>
+
+        <a href="/notes">
+            <button type="button">Add Note</button>
+        </a>
+
+        <a href="/planner">
+            <button type="button">Add Task</button>
+        </a>
+
+        <a href="/expenses">
+            <button type="button">Add Expense</button>
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

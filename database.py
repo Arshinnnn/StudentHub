@@ -15,9 +15,11 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
-    completed INTEGER DEFAULT 0
+    completed INTEGER DEFAULT 0,
+    priority TEXT DEFAULT 'Medium'
 )
 """)
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS expenses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,6 +27,7 @@ CREATE TABLE IF NOT EXISTS expenses (
     amount REAL NOT NULL
 )
 """)
+
 connection.commit()
 connection.close()
 

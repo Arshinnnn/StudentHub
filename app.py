@@ -13,7 +13,37 @@ def home():
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    # Notes
+    cursor.execute("SELECT COUNT(*) FROM notes")
+    total_notes = cursor.fetchone()[0]
+
+    # Tasks
+    cursor.execute("SELECT COUNT(*) FROM tasks")
+    total_tasks = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM tasks WHERE completed = 1")
+    completed_tasks = cursor.fetchone()[0]
+
+    pending_tasks = total_tasks - completed_tasks
+
+    # Expenses
+    cursor.execute("SELECT SUM(amount) FROM expenses")
+    total_expenses = cursor.fetchone()[0] or 0
+
+    connection.close()
+
+    return render_template(
+        "dashboard.html",
+        total_notes=total_notes,
+        total_tasks=total_tasks,
+        completed_tasks=completed_tasks,
+        pending_tasks=pending_tasks,
+        total_expenses=total_expenses
+    )
 
 
 @app.route("/notes", methods=["GET", "POST"])
@@ -90,58 +120,30 @@ def edit_note(note_id):
 @app.route("/planner", methods=["GET", "POST"])
 def planner():
 
-    connection =sqlite3.connect(DATABASE)
+    connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
     if request.method == "POST":
 
         title = request.form["title"]
+        priority = request.form["priority"]
 
         cursor.execute(
-            "INSERT INTO tasks (title) VALUES (?)",
-            (title,)
+            "INSERT INTO tasks (title, priority) VALUES (?, ?)",
+            (title, priority)
         )
 
         connection.commit()
 
-    cursor.execute("SELECT * FROM tasks")
+    cursor.execute(
+        "SELECT * FROM tasks ORDER BY completed ASC, id DESC"
+    )
+
     tasks = cursor.fetchall()
 
     connection.close()
 
     return render_template("planner.html", tasks=tasks)
-@app.route("/complete_task/<int:task_id>")
-def complete_task(task_id):
-
-    connection = sqlite3.connect(DATABASE)
-    cursor = connection.cursor()
-
-    cursor.execute(
-        "UPDATE tasks SET completed = 1 WHERE id = ?",
-        (task_id,)
-    )
-
-    connection.commit()
-    connection.close()
-
-    return redirect("/planner")
-
-
-@app.route("/delete_task/<int:task_id>")
-def delete_task(task_id):
-
-    connection = sqlite3.connect(DATABASE)
-    cursor = connection.cursor()
-
-    cursor.execute(
-        "DELETE FROM tasks WHERE id = ?",
-        (task_id,)
-    )
-
-    connection.commit()
-    connection.close()
-
-    return redirect("/planner")
 
 @app.route("/expenses", methods=["GET", "POST"])
 def expenses():
