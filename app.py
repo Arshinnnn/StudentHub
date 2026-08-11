@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
+from datetime import date
 import os
 
 app = Flask(__name__)
@@ -149,7 +150,46 @@ def planner():
 
     connection.close()
 
-    return render_template("planner.html", tasks=tasks)
+    today = date.today().isoformat()
+
+    return render_template(
+        "planner.html",
+        tasks=tasks,
+        today=today
+    )
+
+@app.route("/complete_task/<int:task_id>")
+def complete_task(task_id):
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "UPDATE tasks SET completed = 1 WHERE id = ?",
+        (task_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect("/planner")
+
+
+@app.route("/delete_task/<int:task_id>")
+def delete_task(task_id):
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "DELETE FROM tasks WHERE id = ?",
+        (task_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect("/planner")
 
 @app.route("/expenses", methods=["GET", "POST"])
 def expenses():

@@ -21,13 +21,16 @@
     <a href="/about">About</a>
 </nav>
 
+
 <div class="container">
 
     <h1>📚 Study Planner</h1>
 
     <p>Plan your tasks and stay organized.</p>
 
-    <!-- Add Task -->
+
+    <!-- ADD TASK -->
+
     <div class="card">
 
         <h2>➕ Add New Task</h2>
@@ -71,10 +74,13 @@
 
     </div>
 
-    <!-- Task List -->
+
+    <!-- TASK LIST -->
+
     <div class="card">
 
         <h2>📋 Your Tasks</h2>
+
 
         {% if tasks %}
 
@@ -82,7 +88,10 @@
 
                 <div class="task">
 
+                    <!-- TASK TITLE -->
+
                     <h3>
+
                         {% if task[2] == 1 %}
                             ✅
                         {% else %}
@@ -90,47 +99,97 @@
                         {% endif %}
 
                         {{ task[1] }}
+
                     </h3>
+
+
+                    <!-- PRIORITY -->
 
                     <p>
                         <strong>Priority:</strong>
-                        {{ task[3] }}
+
+                        {% if task[3] == "High" %}
+                            🔴 High
+
+                        {% elif task[3] == "Medium" %}
+                            🟡 Medium
+
+                        {% else %}
+                            🟢 Low
+                        {% endif %}
+
                     </p>
 
+
+                    <!-- DUE DATE -->
+
                     <p>
+
                         <strong>Due:</strong>
-                        {{ task[4] }}
+
+                        {% if task[2] == 1 %}
+
+                            <span>
+                                ✅ Completed
+                            </span>
+
+                        {% elif task[4] < today %}
+
+                            <span>
+                                ⚠️ Overdue
+                            </span>
+
+                        {% else %}
+
+                            <span>
+                                {{ task[4] }}
+                            </span>
+
+                        {% endif %}
+
                     </p>
+
+
+                    <!-- ACTIONS -->
 
                     {% if task[2] == 0 %}
 
                         <a href="/complete_task/{{ task[0] }}">
                             <button type="button">
-                                Complete
+                                ✅ Complete
                             </button>
                         </a>
 
                     {% else %}
 
-                        <p>✅ Task completed</p>
+                        <p>
+                            <strong>Task completed.</strong>
+                        </p>
 
                     {% endif %}
 
+
                     <a href="/delete_task/{{ task[0] }}">
+
                         <button type="button">
-                            Delete
+                            🗑️ Delete
                         </button>
+
                     </a>
 
                 </div>
+
 
                 <hr>
 
             {% endfor %}
 
+
         {% else %}
 
-            <p>No tasks yet. Add your first task above.</p>
+            <p>
+                No tasks yet. Add your first task above.
+            </p>
 
         {% endif %}
 
