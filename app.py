@@ -116,7 +116,6 @@ def edit_note(note_id):
 
     return render_template("edit_note.html", note=note)
 
-
 @app.route("/planner", methods=["GET", "POST"])
 def planner():
 
@@ -127,16 +126,23 @@ def planner():
 
         title = request.form["title"]
         priority = request.form["priority"]
+        due_date = request.form["due_date"]
 
         cursor.execute(
-            "INSERT INTO tasks (title, priority) VALUES (?, ?)",
-            (title, priority)
+            """
+            INSERT INTO tasks (title, priority, due_date)
+            VALUES (?, ?, ?)
+            """,
+            (title, priority, due_date)
         )
 
         connection.commit()
 
     cursor.execute(
-        "SELECT * FROM tasks ORDER BY completed ASC, id DESC"
+        """
+        SELECT * FROM tasks
+        ORDER BY completed ASC, due_date ASC
+        """
     )
 
     tasks = cursor.fetchall()

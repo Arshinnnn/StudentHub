@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>StudentHub - Planner</title>
+
+    <title>StudentHub - Study Planner</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
@@ -24,69 +25,119 @@
 
     <h1>📚 Study Planner</h1>
 
-    <form method="POST" action="/planner">
+    <p>Plan your tasks and stay organized.</p>
 
-    <input
-        type="text"
-        name="title"
-        placeholder="Enter a task..."
-        required
-    >
+    <!-- Add Task -->
+    <div class="card">
 
-    <select name="priority">
+        <h2>➕ Add New Task</h2>
 
-        <option value="Low">Low Priority</option>
+        <form method="POST" action="/planner">
 
-        <option value="Medium" selected>
-            Medium Priority
-        </option>
+            <input
+                type="text"
+                name="title"
+                placeholder="Enter a task..."
+                required
+            >
 
-        <option value="High">High Priority</option>
+            <select name="priority">
 
-    </select>
+                <option value="Low">
+                    Low Priority
+                </option>
 
-    <button type="submit">
-        Add Task
-    </button>
+                <option value="Medium" selected>
+                    Medium Priority
+                </option>
 
+                <option value="High">
+                    High Priority
+                </option>
 
-    </form>
+            </select>
 
-    <hr>
+            <input
+                type="date"
+                name="due_date"
+                required
+            >
 
-    <h2>My Tasks</h2>
+            <button type="submit">
+                Add Task
+            </button>
 
-    {% for task in tasks %}
+        </form>
 
-        <div class="card">
+    </div>
 
-    {% if task[2] == 1 %}
-        <h3><s>{{ task[1] }}</s></h3>
-        <p>Completed ✅</p>
-    {% else %}
-        <<h3>{{ task[1] }}</h3>
+    <!-- Task List -->
+    <div class="card">
 
-<p>
-    Priority: <strong>{{ task[3] }}</strong>
-</p>
+        <h2>📋 Your Tasks</h2>
 
-        <a href="/complete_task/{{ task[0] }}">
-            <button type="button">Complete</button>
-        </a>
-    {% endif %}
+        {% if tasks %}
 
-    <a href="/delete_task/{{ task[0] }}">
-        <button type="button">Delete</button>
-    </a>
+            {% for task in tasks %}
 
-</div>
-    {% else %}
+                <div class="task">
 
-        <p>No tasks yet.</p>
+                    <h3>
+                        {% if task[2] == 1 %}
+                            ✅
+                        {% else %}
+                            ⏳
+                        {% endif %}
 
-    {% endfor %}
+                        {{ task[1] }}
+                    </h3>
+
+                    <p>
+                        <strong>Priority:</strong>
+                        {{ task[3] }}
+                    </p>
+
+                    <p>
+                        <strong>Due:</strong>
+                        {{ task[4] }}
+                    </p>
+
+                    {% if task[2] == 0 %}
+
+                        <a href="/complete_task/{{ task[0] }}">
+                            <button type="button">
+                                Complete
+                            </button>
+                        </a>
+
+                    {% else %}
+
+                        <p>✅ Task completed</p>
+
+                    {% endif %}
+
+                    <a href="/delete_task/{{ task[0] }}">
+                        <button type="button">
+                            Delete
+                        </button>
+                    </a>
+
+                </div>
+
+                <hr>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No tasks yet. Add your first task above.</p>
+
+        {% endif %}
+
+    </div>
 
 </div>
 
 </body>
+
 </html>
