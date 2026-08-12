@@ -1,16 +1,28 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
-from datetime import date
 import os
+from datetime import date
+
 
 app = Flask(__name__)
+
+# Always use the database inside the StudentHub folder
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, "studenthub.db")
+
+
+# --------------------------------------------------
+# HOME
+# --------------------------------------------------
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
+
+# --------------------------------------------------
+# DASHBOARD
+# --------------------------------------------------
 
 @app.route("/dashboard")
 def dashboard():
@@ -18,22 +30,31 @@ def dashboard():
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
-    # Notes
+    # Total notes
     cursor.execute("SELECT COUNT(*) FROM notes")
     total_notes = cursor.fetchone()[0]
 
-    # Tasks
+    # Total tasks
     cursor.execute("SELECT COUNT(*) FROM tasks")
     total_tasks = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(*) FROM tasks WHERE completed = 1")
+    # Completed tasks
+    cursor.execute(
+        "SELECT COUNT(*) FROM tasks WHERE completed = 1"
+    )
     completed_tasks = cursor.fetchone()[0]
 
-    pending_tasks = total_tasks - completed_tasks
+    # Pending tasks
+    cursor.execute(
+        "SELECT COUNT(*) FROM tasks WHERE completed = 0"
+    )
+    pending_tasks = cursor.fetchone()[0]
 
-    # Expenses
-    cursor.execute("SELECT SUM(amount) FROM expenses")
-    total_expenses = cursor.fetchone()[0] or 0
+    # Total expenses
+    cursor.execute(
+        "SELECT COALESCE(SUM(amount), 0) FROM expenses"
+    )
+    total_expenses = cursor.fetchone()[0]
 
     connection.close()
 
@@ -47,57 +68,85 @@ def dashboard():
     )
 
 
+# --------------------------------------------------
+# NOTES
+# --------------------------------------------------
+# --------------------------------------------------
+# NOTES
+# --------------------------------------------------
+
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
-    connection = sqlite3.connect("DATABASE")
+
+    connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
     if request.method == "POST":
+
         title = request.form["title"]
         content = request.form["content"]
 
         cursor.execute(
-            "INSERT INTO notes (title, content) VALUES (?, ?)",
+            """
+            INSERT INTO notes (title, content)
+            VALUES (?, ?)
+            """,
             (title, content)
         )
 
         connection.commit()
 
-    cursor.execute("SELECT * FROM notes")
+    search = request.args.get("search", "").strip()
+
+    if search:
+
+        cursor.execute(
+            """
+            SELECT * FROM notes
+            WHERE title LIKE ? OR content LIKE ?
+            ORDER BY id DESC
+            """,
+            (f"%{search}%", f"%{search}%")
+        )
+
+    else:
+
+        cursor.execute(
+            "SELECT * FROM notes ORDER BY id DESC"
+        )
+
     notes = cursor.fetchall()
 
     connection.close()
 
-    return render_template("notes.html", notes=notes)
-
-
-@app.route("/delete_note/<int:note_id>")
-def delete_note(note_id):
-    connection = sqlite3.connect(DATABASE)
-    cursor = connection.cursor()
-
-    cursor.execute(
-        "DELETE FROM notes WHERE id = ?",
-        (note_id,)
+    return render_template(
+        "notes.html",
+        notes=notes,
+        search=search
     )
 
-    connection.commit()
-    connection.close()
 
-    return redirect("/notes")
-
+# --------------------------------------------------
+# EDIT NOTE
+# --------------------------------------------------
 
 @app.route("/edit_note/<int:note_id>", methods=["GET", "POST"])
 def edit_note(note_id):
+
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
     if request.method == "POST":
+
         title = request.form["title"]
         content = request.form["content"]
 
         cursor.execute(
-            "UPDATE notes SET title = ?, content = ? WHERE id = ?",
+            """
+            UPDATE notes
+            SET title = ?, content = ?
+            WHERE id = ?
+            """,
             (title, content, note_id)
         )
 
@@ -115,7 +164,36 @@ def edit_note(note_id):
 
     connection.close()
 
-    return render_template("edit_note.html", note=note)
+    return render_template(
+        "edit_note.html",
+        note=note
+    )
+
+
+# --------------------------------------------------
+# DELETE NOTE
+# --------------------------------------------------
+
+@app.route("/delete_note/<int:note_id>")
+def delete_note(note_id):
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "DELETE FROM notes WHERE id = ?",
+        (note_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect("/notes")
+
+
+# --------------------------------------------------
+# PLANNER
+# --------------------------------------------------
 
 @app.route("/planner", methods=["GET", "POST"])
 def planner():
@@ -131,8 +209,9 @@ def planner():
 
         cursor.execute(
             """
-            INSERT INTO tasks (title, priority, due_date)
-            VALUES (?, ?, ?)
+            INSERT INTO tasks
+            (title, completed, priority, due_date)
+            VALUES (?, 0, ?, ?)
             """,
             (title, priority, due_date)
         )
@@ -141,7 +220,8 @@ def planner():
 
     cursor.execute(
         """
-        SELECT * FROM tasks
+        SELECT *
+        FROM tasks
         ORDER BY completed ASC, due_date ASC
         """
     )
@@ -158,6 +238,11 @@ def planner():
         today=today
     )
 
+
+# --------------------------------------------------
+# COMPLETE TASK
+# --------------------------------------------------
+
 @app.route("/complete_task/<int:task_id>")
 def complete_task(task_id):
 
@@ -165,7 +250,11 @@ def complete_task(task_id):
     cursor = connection.cursor()
 
     cursor.execute(
-        "UPDATE tasks SET completed = 1 WHERE id = ?",
+        """
+        UPDATE tasks
+        SET completed = 1
+        WHERE id = ?
+        """,
         (task_id,)
     )
 
@@ -174,6 +263,10 @@ def complete_task(task_id):
 
     return redirect("/planner")
 
+
+# --------------------------------------------------
+# DELETE TASK
+# --------------------------------------------------
 
 @app.route("/delete_task/<int:task_id>")
 def delete_task(task_id):
@@ -191,6 +284,11 @@ def delete_task(task_id):
 
     return redirect("/planner")
 
+
+# --------------------------------------------------
+# EXPENSES
+# --------------------------------------------------
+
 @app.route("/expenses", methods=["GET", "POST"])
 def expenses():
 
@@ -203,29 +301,48 @@ def expenses():
         amount = request.form["amount"]
 
         cursor.execute(
-            "INSERT INTO expenses (title, amount) VALUES (?, ?)",
+            """
+            INSERT INTO expenses (title, amount)
+            VALUES (?, ?)
+            """,
             (title, amount)
         )
 
         connection.commit()
 
-    cursor.execute("SELECT * FROM expenses")
+    cursor.execute(
+        "SELECT * FROM expenses ORDER BY id DESC"
+    )
+
     expenses = cursor.fetchall()
 
-    total = sum(expense[2] for expense in expenses)
+    cursor.execute(
+        "SELECT COALESCE(SUM(amount), 0) FROM expenses"
+    )
+
+    total_expenses = cursor.fetchone()[0]
 
     connection.close()
 
     return render_template(
         "expenses.html",
         expenses=expenses,
-        total=total
+        total_expenses=total_expenses
     )
+
+
+# --------------------------------------------------
+# ABOUT
+# --------------------------------------------------
 
 @app.route("/about")
 def about():
     return render_template("about.html")
 
+
+# --------------------------------------------------
+# RUN APPLICATION
+# --------------------------------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)

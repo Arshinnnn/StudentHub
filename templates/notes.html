@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>StudentHub - Notes</title>
 
@@ -13,18 +12,41 @@
 
 <body>
 
-    <nav>
-        <a href="/">Home</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/planner">Planner</a>
-        <a href="/notes">Notes</a>
-        <a href="/expenses">Expenses</a>
-        <a href="/about">About</a>
-    </nav>
+<nav>
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/planner">Planner</a>
+    <a href="/notes">Notes</a>
+    <a href="/expenses">Expenses</a>
+    <a href="/about">About</a>
+</nav>
 
-    <div class="container">
+<div class="container">
 
-        <h1>📝 My Notes</h1>
+    <h1>📝 Notes</h1>
+    <form method="GET" action="/notes">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="🔍 Search notes..."
+        value="{{ search }}"
+    >
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+    <p>Create, edit and manage your notes.</p>
+
+
+    <!-- ADD NOTE -->
+
+    <div class="card">
+
+        <h2>➕ Add New Note</h2>
 
         <form method="POST" action="/notes">
 
@@ -35,53 +57,73 @@
                 required
             >
 
-            <br><br>
-
             <textarea
                 name="content"
                 placeholder="Write your note..."
+                rows="6"
                 required
             ></textarea>
 
-            <br><br>
-
-            <button type="submit">Add Note</button>
+            <button type="submit">
+                Add Note
+            </button>
 
         </form>
 
-        <hr>
+    </div>
 
-        <h2>Saved Notes</h2>
 
-        {% for note in notes %}
+    <!-- NOTES LIST -->
 
-            <div class="card">
+    <div class="card">
 
-                <h3>{{ note[1] }}</h3>
+        <h2>📚 Your Notes</h2>
 
-                <p>{{ note[2] }}</p>
+        {% if notes %}
 
-                <a <a href="/edit_note/{{ note[0] }}">
-    <button type="button">Edit</button>
-</a>
+            {% for note in notes %}
 
-<a href="/edit_note/{{ note[0] }}">
-    <button type="button">Edit</button>
-</a>
+                <div class="note">
 
-<a href="/delete_note/{{ note[0] }}">
-    <button type="button">Delete</button>
-</a>
+                    <h3>{{ note[1] }}</h3>
 
-            </div>
+                    <p>{{ note[2] }}</p>
+
+
+                    <!-- EDIT -->
+
+                    <a href="/edit_note/{{ note[0] }}">
+                        <button type="button">
+                            ✏️ Edit
+                        </button>
+                    </a>
+
+
+                    <!-- DELETE -->
+
+                    <a href="/delete_note/{{ note[0] }}">
+                        <button type="button">
+                            🗑️ Delete
+                        </button>
+                    </a>
+
+                </div>
+
+                <hr>
+
+            {% endfor %}
 
         {% else %}
 
-            <p>No notes yet. Add your first note above.</p>
+            <p>
+                No notes yet. Create your first note above.
+            </p>
 
-        {% endfor %}
+        {% endif %}
 
     </div>
+
+</div>
 
 </body>
 
