@@ -1,89 +1,508 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>StudentHub Dashboard</title>
+    <title>StudentHub | Dashboard</title>
 
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
 </head>
 
 <body>
 
-<nav>
-    <a href="/">Home</a>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/planner">Planner</a>
-    <a href="/notes">Notes</a>
-    <a href="/expenses">Expenses</a>
-    <a href="/about">About</a>
-</nav>
+<div class="app">
 
-<div class="container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-    <h1>🎓 StudentHub</h1>
-
-    <p>Your productivity overview</p>
-
-    <div class="cards">
-
-        <div class="card">
-            <h2>📝 Notes</h2>
-            <h3>{{ total_notes }}</h3>
-            <p>Total Notes</p>
-
-            <a href="/notes">Open Notes →</a>
+        <div class="logo">
+            <div class="logo-icon">S</div>
+            <div>
+                <h2>StudentHub</h2>
+                <span>Student Workspace</span>
+            </div>
         </div>
 
-        <div class="card">
-            <h2>📚 Tasks</h2>
-            <h3>{{ total_tasks }}</h3>
-            <p>Total Tasks</p>
+        <nav>
 
-            <a href="/planner">Open Planner →</a>
+            <p class="menu-title">MAIN</p>
+
+            <a href="{{ url_for('dashboard') }}" class="nav-item active">
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+            <p class="menu-title">STUDY</p>
+
+            <a href="{{ url_for('planner') }}" class="nav-item">
+                <span>✓</span>
+                Planner
+            </a>
+
+            <a href="{{ url_for('notes') }}" class="nav-item">
+                <span>📝</span>
+                Notes
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>📄</span>
+                Documents
+            </a>
+
+            <p class="menu-title">PERSONAL</p>
+
+            <a href="{{ url_for('expenses') }}" class="nav-item">
+                <span>₹</span>
+                Expenses
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>🤖</span>
+                AI Assistant
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="#" class="nav-item">
+                <span>⚙</span>
+                Settings
+            </a>
+
+            <div class="profile-mini">
+                <div class="avatar">A</div>
+
+                <div>
+                    <strong>Arsh</strong>
+                    <small>Student</small>
+                </div>
+
+                <span class="dots">•••</span>
+            </div>
+
         </div>
 
-        <div class="card">
-            <h2>✅ Completed</h2>
-            <h3>{{ completed_tasks }}</h3>
-            <p>Completed Tasks</p>
-        </div>
+    </aside>
 
-        <div class="card">
-            <h2>⏳ Pending</h2>
-            <h3>{{ pending_tasks }}</h3>
-            <p>Pending Tasks</p>
-        </div>
 
-        <div class="card">
-            <h2>💰 Expenses</h2>
-            <h3>₹{{ "%.2f"|format(total_expenses) }}</h3>
-            <p>Total Spending</p>
+    <!-- MAIN -->
+    <main class="main">
 
-            <a href="/expenses">View Expenses →</a>
-        </div>
+        <!-- TOP BAR -->
+        <header class="topbar">
 
-    </div>
+            <div class="mobile-logo">
+                <div class="logo-icon">S</div>
+                <strong>StudentHub</strong>
+            </div>
 
-    <div class="card">
+            <div class="top-actions">
 
-        <h2>🚀 Quick Actions</h2>
+                <button class="icon-btn">
+                    🔍
+                </button>
 
-        <a href="/notes">
-            <button type="button">Add Note</button>
-        </a>
+                <button class="icon-btn notification">
+                    🔔
+                    <span></span>
+                </button>
 
-        <a href="/planner">
-            <button type="button">Add Task</button>
-        </a>
+                <div class="top-avatar">
+                    A
+                </div>
 
-        <a href="/expenses">
-            <button type="button">Add Expense</button>
-        </a>
+            </div>
 
-    </div>
+        </header>
+
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <!-- WELCOME -->
+            <div class="welcome">
+
+                <div>
+                    <p class="small-heading">THURSDAY, AUGUST 13</p>
+
+                    <h1>
+                        Good evening, Arsh.
+                    </h1>
+
+                    <p>
+                        Here's your academic overview for today.
+                    </p>
+                </div>
+
+                <a href="{{ url_for('planner') }}" class="primary-btn">
+                    + Add Task
+                </a>
+
+            </div>
+
+
+            <!-- STAT CARDS -->
+            <div class="stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>Pending Tasks</span>
+                        <div class="stat-icon purple">✓</div>
+                    </div>
+
+                    <h2>12</h2>
+
+                    <p>
+                        <span class="positive">3 due today</span>
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>Total Notes</span>
+                        <div class="stat-icon blue">📝</div>
+                    </div>
+
+                    <h2>24</h2>
+
+                    <p>
+                        <span class="positive">+4 this week</span>
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>Study Progress</span>
+                        <div class="stat-icon green">↗</div>
+                    </div>
+
+                    <h2>72%</h2>
+
+                    <div class="progress">
+                        <div class="progress-fill" style="width:72%"></div>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>Monthly Expenses</span>
+                        <div class="stat-icon orange">₹</div>
+                    </div>
+
+                    <h2>₹2,450</h2>
+
+                    <p>
+                        <span class="neutral">This month</span>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- MAIN GRID -->
+            <div class="dashboard-grid">
+
+
+                <!-- TASKS -->
+                <div class="panel tasks-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Today's Tasks</h3>
+                            <p>Keep your productivity moving.</p>
+                        </div>
+
+                        <a href="{{ url_for('planner') }}">
+                            View all
+                        </a>
+
+                    </div>
+
+
+                    <div class="task-list">
+
+                        <div class="task">
+
+                            <div class="task-check"></div>
+
+                            <div class="task-info">
+                                <strong>Complete DBMS assignment</strong>
+                                <span>Due today</span>
+                            </div>
+
+                            <span class="priority high">
+                                High
+                            </span>
+
+                        </div>
+
+
+                        <div class="task">
+
+                            <div class="task-check"></div>
+
+                            <div class="task-info">
+                                <strong>Practice Python DSA</strong>
+                                <span>Due tomorrow</span>
+                            </div>
+
+                            <span class="priority medium">
+                                Medium
+                            </span>
+
+                        </div>
+
+
+                        <div class="task completed">
+
+                            <div class="task-check checked">
+                                ✓
+                            </div>
+
+                            <div class="task-info">
+                                <strong>Flask database integration</strong>
+                                <span>Completed</span>
+                            </div>
+
+                            <span class="priority done">
+                                Done
+                            </span>
+
+                        </div>
+
+
+                        <div class="task">
+
+                            <div class="task-check"></div>
+
+                            <div class="task-info">
+                                <strong>Review Python OOP</strong>
+                                <span>Tomorrow</span>
+                            </div>
+
+                            <span class="priority low">
+                                Low
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUICK ACTIONS -->
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h3>Quick Actions</h3>
+                            <p>Get things done faster.</p>
+                        </div>
+                    </div>
+
+
+                    <div class="quick-actions">
+
+                        <a href="{{ url_for('planner') }}" class="quick-action">
+                            <div class="quick-icon purple">✓</div>
+                            <div>
+                                <strong>Add Task</strong>
+                                <span>Create a new task</span>
+                            </div>
+                            <b>→</b>
+                        </a>
+
+
+                        <a href="{{ url_for('notes') }}" class="quick-action">
+                            <div class="quick-icon blue">📝</div>
+                            <div>
+                                <strong>Add Note</strong>
+                                <span>Save your knowledge</span>
+                            </div>
+                            <b>→</b>
+                        </a>
+
+
+                        <a href="{{ url_for('expenses') }}" class="quick-action">
+                            <div class="quick-icon orange">₹</div>
+                            <div>
+                                <strong>Add Expense</strong>
+                                <span>Track your spending</span>
+                            </div>
+                            <b>→</b>
+                        </a>
+
+
+                        <a href="#" class="quick-action">
+                            <div class="quick-icon green">🤖</div>
+                            <div>
+                                <strong>Ask AI</strong>
+                                <span>Get study assistance</span>
+                            </div>
+                            <b>→</b>
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STUDY PROGRESS -->
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Study Progress</h3>
+                            <p>Your weekly activity.</p>
+                        </div>
+
+                        <span class="week-label">
+                            This week
+                        </span>
+
+                    </div>
+
+
+                    <div class="chart">
+
+                        <div class="bar-item">
+                            <div class="bar" style="height:45%"></div>
+                            <span>Mon</span>
+                        </div>
+
+                        <div class="bar-item">
+                            <div class="bar" style="height:70%"></div>
+                            <span>Tue</span>
+                        </div>
+
+                        <div class="bar-item">
+                            <div class="bar" style="height:55%"></div>
+                            <span>Wed</span>
+                        </div>
+
+                        <div class="bar-item">
+                            <div class="bar today" style="height:85%"></div>
+                            <span>Thu</span>
+                        </div>
+
+                        <div class="bar-item">
+                            <div class="bar" style="height:60%"></div>
+                            <span>Fri</span>
+                        </div>
+
+                        <div class="bar-item">
+                            <div class="bar" style="height:35%"></div>
+                            <span>Sat</span>
+                        </div>
+
+                        <div class="bar-item">
+                            <div class="bar" style="height:25%"></div>
+                            <span>Sun</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECENT NOTES -->
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Recent Notes</h3>
+                            <p>Your latest knowledge.</p>
+                        </div>
+
+                        <a href="{{ url_for('notes') }}">
+                            View all
+                        </a>
+
+                    </div>
+
+
+                    <div class="notes-list">
+
+                        <a href="#" class="note">
+
+                            <div class="note-icon">
+                                PY
+                            </div>
+
+                            <div>
+                                <strong>Python OOP</strong>
+                                <span>Updated today</span>
+                            </div>
+
+                            <b>→</b>
+
+                        </a>
+
+
+                        <a href="#" class="note">
+
+                            <div class="note-icon">
+                                DB
+                            </div>
+
+                            <div>
+                                <strong>Database Management</strong>
+                                <span>Updated yesterday</span>
+                            </div>
+
+                            <b>→</b>
+
+                        </a>
+
+
+                        <a href="#" class="note">
+
+                            <div class="note-icon">
+                                FL
+                            </div>
+
+                            <div>
+                                <strong>Flask Development</strong>
+                                <span>Updated 3 days ago</span>
+                            </div>
+
+                            <b>→</b>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
 
