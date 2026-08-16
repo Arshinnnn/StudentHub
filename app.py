@@ -195,11 +195,19 @@ def delete_note(note_id):
 # PLANNER
 # --------------------------------------------------
 
+# --------------------------------------------------
+# PLANNER
+# --------------------------------------------------
+
 @app.route("/planner", methods=["GET", "POST"])
 def planner():
 
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
+
+    # --------------------------------------------------
+    # ADD TASK
+    # --------------------------------------------------
 
     if request.method == "POST":
 
@@ -218,15 +226,25 @@ def planner():
 
         connection.commit()
 
-    # -----------------------------
-    # TASK STATISTICS
-    # -----------------------------
+    # --------------------------------------------------
+    # TODAY
+    # --------------------------------------------------
 
+    today = date.today().isoformat()
+
+    # --------------------------------------------------
+    # TASK STATISTICS
+    # --------------------------------------------------
+
+    # Total tasks
     cursor.execute(
         "SELECT COUNT(*) FROM tasks"
     )
+
     total_tasks = cursor.fetchone()[0]
 
+
+    # Completed tasks
     cursor.execute(
         """
         SELECT COUNT(*)
@@ -234,8 +252,11 @@ def planner():
         WHERE completed = 1
         """
     )
+
     completed_tasks = cursor.fetchone()[0]
 
+
+    # Pending tasks
     cursor.execute(
         """
         SELECT COUNT(*)
@@ -243,10 +264,11 @@ def planner():
         WHERE completed = 0
         """
     )
+
     pending_tasks = cursor.fetchone()[0]
 
-    today = date.today().isoformat()
 
+    # Overdue tasks
     cursor.execute(
         """
         SELECT COUNT(*)
@@ -256,13 +278,16 @@ def planner():
         """,
         (today,)
     )
+
     overdue_tasks = cursor.fetchone()[0]
 
-    # -----------------------------
+
+    # --------------------------------------------------
     # TASK FILTER
-    # -----------------------------
+    # --------------------------------------------------
 
     status = request.args.get("status", "all")
+
 
     if status == "pending":
 
@@ -275,6 +300,7 @@ def planner():
             """
         )
 
+
     elif status == "completed":
 
         cursor.execute(
@@ -286,6 +312,7 @@ def planner():
             """
         )
 
+
     else:
 
         cursor.execute(
@@ -296,20 +323,84 @@ def planner():
             """
         )
 
+
     tasks = cursor.fetchall()
 
     connection.close()
 
+
+    # --------------------------------------------------
+    # SEND DATA TO TEMPLATE
+    # --------------------------------------------------
+
     return render_template(
         "planner.html",
+
         tasks=tasks,
+
         today=today,
+
         status=status,
+
         total_tasks=total_tasks,
+
         completed_tasks=completed_tasks,
+
         pending_tasks=pending_tasks,
+
         overdue_tasks=overdue_tasks
     )
+
+
+# --------------------------------------------------
+# COMPLETE TASK
+# --------------------------------------------------
+
+@app.route("/complete_task/<int:task_id>")
+def complete_task(task_id):
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        UPDATE tasks
+        SET completed = 1
+        WHERE id = ?
+        """,
+        (task_id,)
+    )
+
+    connection.commit()
+
+    connection.close()
+
+    return redirect("/planner")
+
+
+# --------------------------------------------------
+# DELETE TASK
+# --------------------------------------------------
+
+@app.route("/delete_task/<int:task_id>")
+def delete_task(task_id):
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        DELETE FROM tasks
+        WHERE id = ?
+        """,
+        (task_id,)
+    )
+
+    connection.commit()
+
+    connection.close()
+
+    return redirect("/planner")
 
 # --------------------------------------------------
 # EXPENSES
