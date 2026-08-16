@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
 
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>StudentHub - Study Planner</title>
 
     <link rel="stylesheet"
@@ -13,12 +16,12 @@
 <body>
 
 <nav>
-    <a href="/">Home</a>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/planner">Planner</a>
-    <a href="/notes">Notes</a>
-    <a href="/expenses">Expenses</a>
-    <a href="/about">About</a>
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('planner') }}">Planner</a>
+    <a href="{{ url_for('notes') }}">Notes</a>
+    <a href="{{ url_for('expenses') }}">Expenses</a>
+    <a href="{{ url_for('about') }}">About</a>
 </nav>
 
 
@@ -34,9 +37,8 @@
     <div class="card">
 
         <h2>➕ Add New Task</h2>
-        
 
-        <form method="POST" action="/planner">
+        <form method="POST" action="{{ url_for('planner') }}">
 
             <input
                 type="text"
@@ -81,28 +83,31 @@
     <div class="card">
 
         <h2>📋 Your Tasks</h2>
+
+
+        <!-- FILTERS -->
+
         <div class="task-filters">
 
-    <a href="{{ url_for('planner', status='all') }}"
-       class="{% if status == 'all' %}active{% endif %}">
-        All
-    </a>
+            <a href="{{ url_for('planner', status='all') }}"
+               class="{% if status == 'all' %}active{% endif %}">
+                All
+            </a>
 
-    <a href="{{ url_for('planner', status='pending') }}"
-       class="{% if status == 'pending' %}active{% endif %}">
-        Pending
-    </a>
+            <a href="{{ url_for('planner', status='pending') }}"
+               class="{% if status == 'pending' %}active{% endif %}">
+                Pending
+            </a>
 
-    <a href="{{ url_for('planner', status='completed') }}"
-       class="{% if status == 'completed' %}active{% endif %}">
-        Completed
-    </a>
+            <a href="{{ url_for('planner', status='completed') }}"
+               class="{% if status == 'completed' %}active{% endif %}">
+                Completed
+            </a>
 
-</div>
-
-
+        </div>
 
 
+        <!-- TASKS -->
 
         {% if tasks %}
 
@@ -128,16 +133,21 @@
                     <!-- PRIORITY -->
 
                     <p>
+
                         <strong>Priority:</strong>
 
                         {% if task[3] == "High" %}
+
                             🔴 High
 
                         {% elif task[3] == "Medium" %}
+
                             🟡 Medium
 
                         {% else %}
+
                             🟢 Low
+
                         {% endif %}
 
                     </p>
@@ -176,7 +186,7 @@
 
                     {% if task[2] == 0 %}
 
-                        <a href="/complete_task/{{ task[0] }}">
+                        <a href="{{ url_for('complete_task', task_id=task[0]) }}">
                             <button type="button">
                                 ✅ Complete
                             </button>
@@ -191,7 +201,7 @@
                     {% endif %}
 
 
-                    <a href="/delete_task/{{ task[0] }}">
+                    <a href="{{ url_for('delete_task', task_id=task[0]) }}">
 
                         <button type="button">
                             🗑️ Delete
@@ -206,11 +216,10 @@
 
             {% endfor %}
 
-
         {% else %}
 
             <p>
-                No tasks yet. Add your first task above.
+                No tasks found for this filter.
             </p>
 
         {% endif %}
