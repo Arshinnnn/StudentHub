@@ -218,10 +218,52 @@ def planner():
 
         connection.commit()
 
-    # Get selected filter
+    # -----------------------------
+    # TASK STATISTICS
+    # -----------------------------
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM tasks"
+    )
+    total_tasks = cursor.fetchone()[0]
+
+    cursor.execute(
+        """
+        SELECT COUNT(*)
+        FROM tasks
+        WHERE completed = 1
+        """
+    )
+    completed_tasks = cursor.fetchone()[0]
+
+    cursor.execute(
+        """
+        SELECT COUNT(*)
+        FROM tasks
+        WHERE completed = 0
+        """
+    )
+    pending_tasks = cursor.fetchone()[0]
+
+    today = date.today().isoformat()
+
+    cursor.execute(
+        """
+        SELECT COUNT(*)
+        FROM tasks
+        WHERE completed = 0
+        AND due_date < ?
+        """,
+        (today,)
+    )
+    overdue_tasks = cursor.fetchone()[0]
+
+    # -----------------------------
+    # TASK FILTER
+    # -----------------------------
+
     status = request.args.get("status", "all")
 
-    # Filter tasks
     if status == "pending":
 
         cursor.execute(
@@ -258,60 +300,16 @@ def planner():
 
     connection.close()
 
-    today = date.today().isoformat()
-
     return render_template(
         "planner.html",
         tasks=tasks,
         today=today,
-        status=status
+        status=status,
+        total_tasks=total_tasks,
+        completed_tasks=completed_tasks,
+        pending_tasks=pending_tasks,
+        overdue_tasks=overdue_tasks
     )
-
-# --------------------------------------------------
-# COMPLETE TASK
-# --------------------------------------------------
-
-@app.route("/complete_task/<int:task_id>")
-def complete_task(task_id):
-
-    connection = sqlite3.connect(DATABASE)
-    cursor = connection.cursor()
-
-    cursor.execute(
-        """
-        UPDATE tasks
-        SET completed = 1
-        WHERE id = ?
-        """,
-        (task_id,)
-    )
-
-    connection.commit()
-    connection.close()
-
-    return redirect("/planner")
-
-
-# --------------------------------------------------
-# DELETE TASK
-# --------------------------------------------------
-
-@app.route("/delete_task/<int:task_id>")
-def delete_task(task_id):
-
-    connection = sqlite3.connect(DATABASE)
-    cursor = connection.cursor()
-
-    cursor.execute(
-        "DELETE FROM tasks WHERE id = ?",
-        (task_id,)
-    )
-
-    connection.commit()
-    connection.close()
-
-    return redirect("/planner")
-
 
 # --------------------------------------------------
 # EXPENSES
