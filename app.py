@@ -16,7 +16,7 @@ DATABASE = os.path.join(BASE_DIR, "studenthub.db")
 # --------------------------------------------------
 
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
 
