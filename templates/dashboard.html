@@ -8,7 +8,7 @@
     <title>StudentHub - Dashboard</title>
 
     <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
@@ -24,134 +24,182 @@
     </nav>
 
 
-    <!-- Dashboard -->
     <main class="dashboard-container">
 
         <!-- Header -->
         <section class="dashboard-header">
-
-            <h1>Student Dashboard</h1>
-
-            <p>
-                Manage your studies, notes, tasks and expenses
-                from one place.
-            </p>
-
+            <div>
+                <p class="dashboard-label">STUDENTHUB</p>
+                <h1>Student Dashboard</h1>
+                <p>
+                    Your study activity, tasks, notes and expenses
+                    in one place.
+                </p>
+            </div>
         </section>
 
 
         <!-- Statistics -->
         <section class="dashboard-cards">
 
-            <!-- Notes -->
-            <div class="dashboard-card">
+            <div class="dashboard-card notes-card">
+                <div class="card-icon">N</div>
 
                 <h2>Notes</h2>
 
                 <h3>{{ total_notes }}</h3>
 
-                <p>
-                    Total notes created
-                </p>
+                <p>Total notes created</p>
 
                 <a href="{{ url_for('notes') }}"
                    class="card-button">
-                    View Notes
+                    View Notes →
                 </a>
-
             </div>
 
 
-            <!-- Tasks -->
-            <div class="dashboard-card">
+            <div class="dashboard-card tasks-card">
+                <div class="card-icon">T</div>
 
                 <h2>Tasks</h2>
 
                 <h3>{{ total_tasks }}</h3>
 
-                <p>
-                    Total tasks
-                </p>
+                <p>Total tasks</p>
 
                 <a href="{{ url_for('planner') }}"
                    class="card-button">
-                    View Planner
+                    View Planner →
                 </a>
-
             </div>
 
 
-            <!-- Completed Tasks -->
-            <div class="dashboard-card">
+            <div class="dashboard-card completed-card">
+                <div class="card-icon">✓</div>
 
                 <h2>Completed</h2>
 
                 <h3>{{ completed_tasks }}</h3>
 
-                <p>
-                    Tasks completed
-                </p>
+                <p>Tasks completed</p>
 
                 <a href="{{ url_for('planner') }}"
                    class="card-button">
-                    View Tasks
+                    View Tasks →
                 </a>
-
             </div>
 
 
-            <!-- Pending Tasks -->
-            <div class="dashboard-card">
+            <div class="dashboard-card pending-card">
+                <div class="card-icon">!</div>
 
                 <h2>Pending</h2>
 
                 <h3>{{ pending_tasks }}</h3>
 
-                <p>
-                    Tasks still pending
-                </p>
+                <p>Tasks still pending</p>
 
                 <a href="{{ url_for('planner') }}"
                    class="card-button">
-                    Complete Tasks
+                    Complete Tasks →
                 </a>
-
             </div>
 
 
-            <!-- Expenses -->
-            <div class="dashboard-card">
+            <div class="dashboard-card expense-card">
+                <div class="card-icon">₹</div>
 
                 <h2>Expenses</h2>
 
-                <h3>₹{{ total_expenses }}</h3>
+                <h3>₹{{ "%.2f"|format(total_expenses) }}</h3>
 
-                <p>
-                    Total recorded expenses
-                </p>
+                <p>Total recorded expenses</p>
 
                 <a href="{{ url_for('expenses') }}"
                    class="card-button">
-                    View Expenses
+                    View Expenses →
                 </a>
-
             </div>
 
 
-            <!-- PDF Vault -->
-            <div class="dashboard-card">
+            <div class="dashboard-card pdf-card">
+                <div class="card-icon">P</div>
 
                 <h2>PDF Vault</h2>
 
-                <p>
-                    Store and organize your important
-                    study documents.
-                </p>
+                <h3>—</h3>
+
+                <p>Study document storage</p>
 
                 <a href="#"
-                   class="card-button">
+                   class="card-button disabled-button">
                     Coming Soon
                 </a>
+            </div>
+
+        </section>
+
+
+        <!-- Progress Section -->
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+                <div>
+                    <p class="dashboard-label">PRODUCTIVITY</p>
+                    <h2>Task Progress</h2>
+                </div>
+            </div>
+
+
+            <div class="progress-card">
+
+                <div class="progress-info">
+
+                    <div>
+                        <span>Completed</span>
+                        <strong>{{ completed_tasks }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Pending</span>
+                        <strong>{{ pending_tasks }}</strong>
+                    </div>
+
+                </div>
+
+
+                {% if total_tasks > 0 %}
+
+                    {% set completion_percentage =
+                        (completed_tasks / total_tasks * 100)|round|int %}
+
+                {% else %}
+
+                    {% set completion_percentage = 0 %}
+
+                {% endif %}
+
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill"
+                         style="width: {{ completion_percentage }}%;">
+                    </div>
+
+                </div>
+
+
+                <div class="progress-footer">
+
+                    <span>
+                        {{ completion_percentage }}% completed
+                    </span>
+
+                    <span>
+                        {{ total_tasks }} total tasks
+                    </span>
+
+                </div>
 
             </div>
 
@@ -159,26 +207,96 @@
 
 
         <!-- Quick Overview -->
-        <section class="quick-overview">
+        <section class="dashboard-section">
 
-            <h2>Quick Overview</h2>
+            <div class="section-heading">
+                <div>
+                    <p class="dashboard-label">OVERVIEW</p>
+                    <h2>Quick Overview</h2>
+                </div>
+            </div>
+
 
             <div class="overview-box">
 
                 <div>
-                    <h3>{{ total_tasks }}</h3>
+                    <span class="overview-number">
+                        {{ total_notes }}
+                    </span>
+
+                    <p>Notes</p>
+                </div>
+
+
+                <div>
+                    <span class="overview-number">
+                        {{ total_tasks }}
+                    </span>
+
                     <p>Total Tasks</p>
                 </div>
 
-                <div>
-                    <h3>{{ completed_tasks }}</h3>
-                    <p>Completed Tasks</p>
-                </div>
 
                 <div>
-                    <h3>{{ pending_tasks }}</h3>
-                    <p>Pending Tasks</p>
+                    <span class="overview-number">
+                        {{ completed_tasks }}
+                    </span>
+
+                    <p>Completed</p>
                 </div>
+
+
+                <div>
+                    <span class="overview-number">
+                        {{ pending_tasks }}
+                    </span>
+
+                    <p>Pending</p>
+                </div>
+
+
+                <div>
+                    <span class="overview-number">
+                        ₹{{ "%.0f"|format(total_expenses) }}
+                    </span>
+
+                    <p>Expenses</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Quick Actions -->
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+                <div>
+                    <p class="dashboard-label">ACTIONS</p>
+                    <h2>Quick Actions</h2>
+                </div>
+            </div>
+
+
+            <div class="quick-actions">
+
+                <a href="{{ url_for('notes') }}">
+                    <strong>+ Add Note</strong>
+                    <span>Create a new study note</span>
+                </a>
+
+
+                <a href="{{ url_for('planner') }}">
+                    <strong>+ Add Task</strong>
+                    <span>Plan your next task</span>
+                </a>
+
+
+                <a href="{{ url_for('expenses') }}">
+                    <strong>+ Add Expense</strong>
+                    <span>Record your spending</span>
+                </a>
 
             </div>
 
