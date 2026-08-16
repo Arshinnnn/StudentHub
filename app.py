@@ -218,13 +218,41 @@ def planner():
 
         connection.commit()
 
-    cursor.execute(
-        """
-        SELECT *
-        FROM tasks
-        ORDER BY completed ASC, due_date ASC
-        """
-    )
+    # Get selected filter
+    status = request.args.get("status", "all")
+
+    # Filter tasks
+    if status == "pending":
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM tasks
+            WHERE completed = 0
+            ORDER BY due_date ASC
+            """
+        )
+
+    elif status == "completed":
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM tasks
+            WHERE completed = 1
+            ORDER BY due_date DESC
+            """
+        )
+
+    else:
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM tasks
+            ORDER BY completed ASC, due_date ASC
+            """
+        )
 
     tasks = cursor.fetchall()
 
@@ -235,9 +263,9 @@ def planner():
     return render_template(
         "planner.html",
         tasks=tasks,
-        today=today
+        today=today,
+        status=status
     )
-
 
 # --------------------------------------------------
 # COMPLETE TASK

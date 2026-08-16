@@ -34,6 +34,7 @@
     <div class="card">
 
         <h2>➕ Add New Task</h2>
+        
 
         <form method="POST" action="/planner">
 
@@ -80,6 +81,27 @@
     <div class="card">
 
         <h2>📋 Your Tasks</h2>
+        <div class="task-filters">
+
+    <a href="{{ url_for('planner', status='all') }}"
+       class="{% if status == 'all' %}active{% endif %}">
+        All
+    </a>
+
+    <a href="{{ url_for('planner', status='pending') }}"
+       class="{% if status == 'pending' %}active{% endif %}">
+        Pending
+    </a>
+
+    <a href="{{ url_for('planner', status='completed') }}"
+       class="{% if status == 'completed' %}active{% endif %}">
+        Completed
+    </a>
+
+</div>
+
+
+
 
 
         {% if tasks %}
